@@ -187,34 +187,43 @@ panic = {
 	weather : function (){
 		
 		
-		$.getJSON('apis/weather.php?city='+panic.config.location, function(data) {
+		$.getJSON('weather/'+panic.config.location, function(data) {
+			
 			
 			var t 		= data.current,
-				today 	= '<li class="condition">'+t.condition+'</li>'
-							+'<li class="temp">'+t.temp+'</li>'
-							+'<li class="humidity">'+t.humidity+'</li>'
-							+'<li class="wind_condition">'+t.wind_condition+'</li>'
-							+'<li class="icon">'+t.icon+'</li>';
+				today 	= '<li class="condition">'+data.weather['current_conditions']['condition']['@'].data+'</li>'
+							+'<li class="temp">'+data.weather['current_conditions']['temp_c']['@'].data+'</li>'
+							+'<li class="humidity">'+data.weather['current_conditions']['humidity']['@'].data+'</li>'
+							+'<li class="wind_condition">'+data.weather['current_conditions']['wind_condition']['@'].data+'</li>'
+							+'<li class="icon">'+data.weather['current_conditions']['icon']['@'].data+'</li>';
 
 			  $('.weather .current').append(today);
 			  
-			  $.each(data, function(i,e){				  
-				  if (i !== 0 || i !== 1 ) {
-				  	var f = data[i],
-						forecast = '<li class="item">'
-								+'<ul>'
-									+'<li class="day">'+ f.day +'</li>'
-									+'<li class="condition">'+ f.condition +'</li>'
-									+'<li class="low">'+ f.low +'</li>'
-									+'<li class="high">'+ f.high +'</li>'
-									+'<li class="icon">'+f.icon  +'</li>'
-								+'</ul>'
-							+'</li>';
-					 $('.weather .forecast').append(forecast);
-					
-				  }
-				  				  
-			  });
+				
+				
+				var forecasts = data.weather['forecast_conditions'];
+				 $.each(forecasts, function(i,e){				  
+
+					console.log(forecasts[i]);
+
+						var f = forecasts[i],
+							forecast = '<li class="item">'
+									+'<ul>'
+										+'<li class="day">'+ f['day_of_week']['@'].data +'</li>'
+										+'<li class="condition">'+ f['condition']['@'].data +'</li>'
+										+'<li class="low">'+ f['low']['@'].data +'</li>'
+										+'<li class="high">'+ f['high']['@'].data +'</li>'
+										+'<li class="icon">'+f['icon']['@'].data  +'</li>'
+									+'</ul>'
+								+'</li>';
+						 $('.weather .forecast').append(forecast);
+
+
+
+
+				  });
+			 
+			
 		
 		});
 				

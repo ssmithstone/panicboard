@@ -31,7 +31,6 @@ app.get('/weather/:city' , function(req, res){
 	var weatherApi = "http://www.google.com/ig/api?weather=" + req.params.city;
 	
 	http.get(weatherApi, function(r){
-		console.log("got response");
 		res.setHeader("Content-Type", "application/json");
 		var result = "";
 		r.on("data" , function(chunk){
@@ -41,10 +40,7 @@ app.get('/weather/:city' , function(req, res){
 			parser.parseString(result , function(err , xmlresult){
 				res.end(JSON.stringify(xmlresult));
 			});			
-		});
-		
-
-		
+		});		
 	}).on('error' , function(e){
 		console.log(e.message);
 	});
