@@ -5,7 +5,8 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , http = require('http');
+  , http = require('http')
+  , xml2js = require('xml2js');
 
 var app = express();
 
@@ -25,7 +26,30 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-// app.get('/', "");
+app.get('/weather/:city' , function(req, res){
+
+	var weatherApi = "http://www.google.com/ig/api?weather=" + req.params.city;
+	
+	http.get(weatherApi, function(r){
+		console.log("got response");
+		res.setHeader("Content-Type", "application/json");
+		var result = "";
+		r.on("data" , function(chunk){
+			result += chunk;
+		}).on("end" , function(){
+			var parser = new xml2js.Parser();
+			parser.parseString(result , function(err , xmlresult){
+				res.end(JSON.stringify(xmlresult));
+			});			
+		});
+		
+
+		
+	}).on('error' , function(e){
+		console.log(e.message);
+	});
+	
+})
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
